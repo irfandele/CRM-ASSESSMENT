@@ -1,0 +1,464 @@
+﻿@page
+@model CRM.Pages.GeneralDashboardModel
+@{
+    ViewData["Title"] = "Case Management System";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #1abc9c;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --danger: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --border-radius: 6px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background-color: var(--light);
+            color: var(--dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        /* Form Container */
+        .form-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Form Styles */
+        .filter-form,
+        .add-case-form {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary);
+        }
+
+        .btn-primary:hover {
+            background-color: #217dbb;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #25a25a;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+            border-radius: var(--border-radius);
+            background-color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 15px;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e1e8ed;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #f8f9fa;
+        }
+
+        /* Table Actions */
+        .action-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 4px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+        .btn-edit {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: #d68910;
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c0392b;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-new {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .status-in-progress {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: var(--success);
+            color: white;
+        }
+
+        /* Channel Badge */
+        .channel-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .channel-ai {
+            background-color: #9b59b6;
+            color: white;
+        }
+
+        .channel-calls {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .channel-whatsapp {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .channel-email {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        /* Responsive Styles  */
+        @@media (max-width: 992px) {
+            .form-container {
+                flex-direction: column;
+            }
+
+            .filter-form,
+            .add-case-form {
+                width: 100%;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .header form {
+                align-self: flex-end;
+            }
+
+            td:nth-child(5),
+            th:nth-child(5) {
+                display: none;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            td:nth-child(1),
+            th:nth-child(1),
+            td:nth-child(6),
+            th:nth-child(6),
+            td:nth-child(7),
+            th:nth-child(7) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Case Management System</h1>
+            <form method="post" asp-page-handler="Logout">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">Logout</button>
+            </form>
+        </div>
+
+        <div class="form-container">
+            <!-- Filter Section -->
+            <div class="filter-form card">
+                <div class="card-header">Filter Cases</div>
+                <div class="card-body">
+                    <form method="get" asp-page="/GeneralDashboard" asp-page-handler="Filter">
+                        <div class="form-group">
+                            <label for="filterName">Customer Name</label>
+                            <input type="text" id="filterName" name="FilterName" value="@Model.FilterName" placeholder="Enter customer name">
+                        </div>
+                        <div class="form-group">
+                            <label for="filterChannel">Channel</label>
+                            <select id="filterChannel" name="FilterChannel">
+                                <option value="">All Channels</option>
+                                <option value="AI" selected="@(Model.FilterChannel == "AI")">AI</option>
+                                <option value="Calls" selected="@(Model.FilterChannel == "Calls")">Calls</option>
+                                <option value="WhatsApp" selected="@(Model.FilterChannel == "WhatsApp")">WhatsApp</option>
+                                <option value="Email" selected="@(Model.FilterChannel == "Email")">Email</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Add Case Form -->
+            <div class="add-case-form card">
+                <div class="card-header">Add New Case</div>
+                <div class="card-body">
+                    <form method="post" asp-page="/GeneralDashboard" asp-page-handler="Add">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label for="empId">Employee ID</label>
+                            <input type="text" id="empId" name="NewCase.EmpID" value="@(HttpContext.Session.GetString("EmpID") ?? "")" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerName">Customer Name</label>
+                            <input type="text" id="customerName" name="NewCase.CustomerName" placeholder="Enter customer name" required maxlength="255" value="@Model.NewCase.CustomerName">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact">Contact</label>
+                            <input type="text" id="contact" name="NewCase.Contact" placeholder="Enter contact details" required maxlength="20" value="@Model.NewCase.Contact">
+                        </div>
+                        <div class="form-group">
+                            <label for="caseChannel">Channel</label>
+                            <select id="caseChannel" name="NewCase.CaseChannel" required>
+                                <option value="AI" selected="@(Model.NewCase.CaseChannel == "AI")">AI</option>
+                                <option value="Calls" selected="@(Model.NewCase.CaseChannel == "Calls")">Calls</option>
+                                <option value="Email" selected="@(Model.NewCase.CaseChannel == "Email")">Email</option>
+                                <option value="WhatsApp" selected="@(Model.NewCase.CaseChannel == "WhatsApp")">WhatsApp</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="NewCase.Description" placeholder="Enter case description" required>@Model.NewCase.Description</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block">Add Case</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Case Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Customer</th>
+                        <th>Contact</th>
+                        <th>Channel</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Created By</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var caseItem in Model.Cases)
+                    {
+                            <tr>
+                                <td>@caseItem.CustomerID</td>
+                                <td>@caseItem.CustomerName</td>
+                                <td>@caseItem.Contact</td>
+                                <td>
+                                    <span class="channel-badge channel-@caseItem.CaseChannel.ToLower()">
+                                    @caseItem.CaseChannel
+                                    </span>
+                                </td>
+                                <td>@caseItem.Description</td>
+                                <td>
+                                @{
+                                    string statusClass = caseItem.Status == "New" ? "status-new" :
+                                                        caseItem.Status == "In Progress" ? "status-in-progress" :
+                                                        "status-completed";
+                                }
+                                    <span class="status-badge @statusClass">@caseItem.Status</span>
+                                </td>
+                                <td>@caseItem.CreatedBy</td>
+                                <td>@caseItem.CreatedAt.ToString("g")</td>
+                                <td>
+                                    <a href="/Edit/@caseItem.CustomerID" class="action-btn btn-edit">Edit</a>
+                                    <form method="post" asp-page="/GeneralDashboard" asp-page-handler="Delete" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                        <input type="hidden" name="customerId" value="@caseItem.CustomerID">
+                                        <button type="submit" class="action-btn btn-delete" onclick="return confirm('Are you sure you want to delete this case?');">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
